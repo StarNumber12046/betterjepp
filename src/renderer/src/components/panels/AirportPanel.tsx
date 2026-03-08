@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Search, Star, MoreVertical, Download, HardDrive, Loader2 } from 'lucide-react'
 import { api } from '@/lib/api-client'
 import { useChartsStore, categorizeChart } from '@/stores/chartsStore'
-import { ChartCategory } from '@/types'
+import { ChartCategory, CHART_CATEGORY_COLORS } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -38,6 +38,8 @@ function ChartListItem({
   const unpinChart = useChartsStore((s) => s.unpinChart)
 
   const isPinned = pinnedCharts.some((p) => p.icao === chart.icao && p.filename === chart.filename)
+  const category = categorizeChart(chart)
+  const borderColor = CHART_CATEGORY_COLORS[category]
 
   const handlePinToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -57,9 +59,12 @@ function ChartListItem({
     <div
       onClick={onClick}
       className={cn(
-        'flex items-center gap-2 p-2 rounded-md cursor-pointer transition-colors group',
-        isSelected ? 'bg-primary/10 border border-primary/30' : 'hover:bg-accent'
+        'flex items-center gap-2 p-2 rounded-md cursor-pointer transition-colors group border-l-4',
+        isSelected
+          ? 'bg-primary/10 border-r border-t border-b border-primary/30'
+          : 'hover:bg-accent border-r-0 border-t-0 border-b-0'
       )}
+      style={{ borderLeftColor: borderColor }}
     >
       <button onClick={handlePinToggle} className="flex-shrink-0">
         <Star
@@ -183,17 +188,24 @@ export function AirportPanel() {
 
       <div className="px-2 py-2 border-b border-border">
         <div className="flex gap-1 overflow-x-auto pb-1">
-          {categories.map((cat) => (
-            <Button
-              key={cat.id}
-              variant={categoryFilter === cat.id ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setCategoryFilter(cat.id)}
-              className="h-7 px-2 text-xs flex-shrink-0"
-            >
-              {cat.label}
-            </Button>
-          ))}
+          {categories.map((cat) => {
+            const isActive = categoryFilter === cat.id
+            const color = CHART_CATEGORY_COLORS[cat.id]
+
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setCategoryFilter(cat.id)}
+                className={cn(
+                  'h-7 px-2 text-xs flex-shrink-0 rounded-md font-medium transition-colors',
+                  isActive ? 'text-white' : 'bg-transparent hover:bg-accent'
+                )}
+                style={isActive ? { backgroundColor: color } : { color: color }}
+              >
+                {cat.label}
+              </button>
+            )
+          })}
         </div>
       </div>
 
