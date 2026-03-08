@@ -5,7 +5,6 @@ import { useChartsStore, categorizeChart } from '@/stores/chartsStore'
 import { ChartCategory, CHART_CATEGORY_COLORS } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,8 +77,8 @@ function ChartListItem({
       </button>
 
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm truncate">{chart.proc_id}</div>
-        <div className="text-xs text-muted-foreground truncate">
+        <div className="font-medium text-sm whitespace-nowrap">{chart.proc_id}</div>
+        <div className="text-xs text-muted-foreground whitespace-nowrap">
           {chart.type_name || chart.chart_type}
         </div>
       </div>
@@ -209,8 +208,8 @@ export function AirportPanel() {
         </div>
       </div>
 
-      <ScrollArea className="flex-1">
-        <div className="p-2">
+      <div className="flex-1 overflow-x-auto overflow-y-auto scrollbar-hide">
+        <div className="p-2 min-w-max">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
@@ -243,7 +242,7 @@ export function AirportPanel() {
             </>
           )}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   )
 }
