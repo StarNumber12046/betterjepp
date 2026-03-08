@@ -27,11 +27,48 @@ export interface ChartTypesResponse {
   types: ChartType[]
 }
 
+export interface Airport {
+  icao: string
+  iata: string
+  name: string
+  city: string
+  state: string
+  country_code: string
+  latitude: number
+  longitude: number
+  timezone: string
+  magnetic_variation: number
+  longest_runway_ft: number
+  airport_use: string
+  customs: string
+  beacon: boolean
+  jet_start_unit: boolean
+  fuel_types: string[]
+  oxygen: string[]
+  repair_types: string[]
+}
+
 export interface HealthResponse {
   [key: string]: string
 }
 
 export interface paths {
+  '/api/v1/airports/{icao}': {
+    get: {
+      parameters: {
+        path: {
+          icao: string
+        }
+      }
+      responses: {
+        200: {
+          content: {
+            'application/json': Airport
+          }
+        }
+      }
+    }
+  }
   '/api/v1/chart-types': {
     get: {
       responses: {
@@ -69,6 +106,9 @@ export interface paths {
         path: {
           icao: string
           filename: string
+        }
+        query?: {
+          no_postprocess?: number
         }
       }
       responses: {

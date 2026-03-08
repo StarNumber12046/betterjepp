@@ -61,7 +61,7 @@ export function CollapsiblePanel({ children }: CollapsiblePanelProps) {
 
   if (panelCollapsed) {
     return (
-      <div className="w-10 bg-card border-r border-border flex flex-col items-center py-2">
+      <div className="w-10 bg-card border-r border-darker flex flex-col items-center py-2">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -82,7 +82,7 @@ export function CollapsiblePanel({ children }: CollapsiblePanelProps) {
   return (
     <div
       className={cn(
-        'relative bg-card border-r border-border flex flex-col shrink-0 overflow-hidden',
+        'relative bg-card border-r border-darker flex flex-col shrink-0 overflow-hidden',
         isResizing && 'select-none'
       )}
       style={{ width: localWidth }}

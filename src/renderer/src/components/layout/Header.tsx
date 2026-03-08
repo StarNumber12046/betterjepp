@@ -37,7 +37,7 @@ export function Header() {
   }
 
   return (
-    <header className="h-12 bg-card border-b border-border flex items-center px-4 gap-4">
+    <header className="h-12 bg-darker border-border flex items-center px-4 gap-4">
       <div className="flex items-center gap-2">
         <span className="font-semibold text-lg text-primary">Charts</span>
       </div>

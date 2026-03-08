@@ -1,25 +1,29 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-background: oklch(15% 0.02 250);
-  --color-foreground: oklch(98% 0.01 250);
-  --color-card: oklch(20% 0.02 250);
-  --color-card-foreground: oklch(98% 0.01 250);
-  --color-popover: oklch(20% 0.02 250);
-  --color-popover-foreground: oklch(98% 0.01 250);
-  --color-primary: oklch(75% 0.15 195);
-  --color-primary-foreground: oklch(15% 0.02 250);
-  --color-secondary: oklch(35% 0.02 250);
-  --color-secondary-foreground: oklch(98% 0.01 250);
-  --color-muted: oklch(30% 0.02 250);
+  --color-background: #223141;
+  --color-foreground: #ffffff;
+  --color-darker: #151d29;
+  --color-card: #223141;
+  --color-card-foreground: white;
+  --color-popover: #242f41;
+  --color-popover-foreground: white;
+  --color-primary: #295892;
+  --color-primary-foreground: white;
+  --color-secondary: #2e63a3;
+  --color-secondary-foreground: white;
+  --color-muted: #223141;
+  --color-chart-list: #242f41;
+  --color-chart-list-selected: #215a91;
   --color-muted-foreground: oklch(65% 0.02 250);
-  --color-accent: oklch(70% 0.15 195);
-  --color-accent-foreground: oklch(15% 0.02 250);
+  --color-accent: #1d2938;
+  --color-accent-foreground: white;
   --color-destructive: oklch(55% 0.22 25);
-  --color-destructive-foreground: oklch(98% 0.01 250);
-  --color-border: oklch(30% 0.02 250);
+  --color-destructive-foreground: white;
+  --color-border: #243140;
+  --color-pill: #1e2736;
   --color-input: oklch(25% 0.02 250);
-  --color-ring: oklch(75% 0.15 195);
+  --color-ring: #295892;
   --radius: 0.5rem;
 }
 

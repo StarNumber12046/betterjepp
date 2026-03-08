@@ -18,7 +18,7 @@ export function Sidebar() {
   const setActiveTab = useUIStore((s) => s.setActiveTab)
 
   return (
-    <div className="w-12 bg-card border-r border-border flex flex-col items-center py-2">
+    <div className="w-12 bg-darker border-r border-border flex flex-col items-center py-2">
       <div className="flex flex-col items-center">
         {topTabs.map((tab) => {
           const Icon = tab.icon
