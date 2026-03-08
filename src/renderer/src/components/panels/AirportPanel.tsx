@@ -62,7 +62,7 @@ function ChartListItem({
         'flex items-center gap-2 p-2 rounded-md cursor-pointer transition-colors group border-l-4',
         isSelected
           ? 'bg-primary/10 border-r border-t border-b border-primary/30'
-          : 'hover:bg-accent border-r-0 border-t-0 border-b-0'
+          : `hover:bg-[${borderColor}] border-r-0 border-t-0 border-b-0`
       )}
       style={{ borderLeftColor: borderColor }}
     >
@@ -157,7 +157,7 @@ export function AirportPanel() {
       if (!aPinned && bPinned) return 1
       return a.proc_id.localeCompare(b.proc_id)
     })
-  }, [data?.charts, categoryFilter, searchQuery, pinnedCharts, currentIcao])
+  }, [data, categoryFilter, searchQuery, pinnedCharts, currentIcao])
 
   if (!currentIcao) {
     return (
@@ -198,7 +198,7 @@ export function AirportPanel() {
                 onClick={() => setCategoryFilter(cat.id)}
                 className={cn(
                   'h-7 px-2 text-xs flex-shrink-0 rounded-md font-medium transition-colors',
-                  isActive ? 'text-white' : 'bg-transparent hover:bg-accent'
+                  isActive ? 'text-white' : 'bg-transparent hover:bg-sky-950'
                 )}
                 style={isActive ? { backgroundColor: color } : { color: color }}
               >

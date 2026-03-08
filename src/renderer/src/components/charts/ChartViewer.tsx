@@ -52,7 +52,7 @@ function PdfControls() {
         <ZoomOut className="w-4 h-4" />
       </Button>
 
-      <Badge variant="secondary" className="h-6 px-2 text-xs min-w-[48px] text-center">
+      <Badge variant="secondary" className="h-6 px-2 text-xs min-w-12 text-center">
         {Math.round(pdfZoom * 100)}%
       </Badge>
 
@@ -83,7 +83,7 @@ function PdfControls() {
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            <span className="text-xs min-w-[48px] text-center">
+            <span className="text-xs min-w-12 text-center">
               {pdfPage} / {pdfNumPages}
             </span>
             <Button

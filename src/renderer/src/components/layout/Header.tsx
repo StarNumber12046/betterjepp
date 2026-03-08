@@ -1,6 +1,5 @@
 import { Activity, Search } from 'lucide-react'
 import { getApiBaseUrl } from '@/lib/api-client'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { useChartsStore } from '@/stores/chartsStore'
 import { useState, useEffect } from 'react'
@@ -40,10 +39,7 @@ export function Header() {
   return (
     <header className="h-12 bg-card border-b border-border flex items-center px-4 gap-4">
       <div className="flex items-center gap-2">
-        <span className="font-semibold text-lg text-primary">BetterJepp</span>
-        <Badge variant="outline" className="text-xs">
-          Chart Viewer
-        </Badge>
+        <span className="font-semibold text-lg text-primary">Charts</span>
       </div>
 
       <form onSubmit={handleSearch} className="flex-1 max-w-md">

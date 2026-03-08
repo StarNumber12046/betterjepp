@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { PanelLeftClose, PanelLeft } from 'lucide-react'
 import { useUIStore } from '@/stores/uiStore'
 import { useSettingsStore } from '@/stores/settingsStore'
@@ -19,6 +19,11 @@ export function CollapsiblePanel({ children }: CollapsiblePanelProps) {
 
   const [isResizing, setIsResizing] = useState(false)
   const [localWidth, setLocalWidth] = useState(panelWidth || DEFAULT_PANEL_WIDTH)
+  const widthRef = useRef(localWidth)
+
+  useEffect(() => {
+    widthRef.current = localWidth
+  }, [localWidth])
 
   useEffect(() => {
     if (!isResizing) {
@@ -33,12 +38,13 @@ export function CollapsiblePanel({ children }: CollapsiblePanelProps) {
 
       const handleMouseMove = (e: MouseEvent) => {
         const newWidth = Math.max(MIN_PANEL_WIDTH, Math.min(MAX_PANEL_WIDTH, e.clientX - 48))
+        widthRef.current = newWidth
         setLocalWidth(newWidth)
       }
 
       const handleMouseUp = () => {
         setIsResizing(false)
-        setPanelWidth(localWidth)
+        setPanelWidth(widthRef.current)
         document.removeEventListener('mousemove', handleMouseMove)
         document.removeEventListener('mouseup', handleMouseUp)
       }
@@ -46,7 +52,7 @@ export function CollapsiblePanel({ children }: CollapsiblePanelProps) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
     },
-    [localWidth, setPanelWidth]
+    [setPanelWidth]
   )
 
   const toggleCollapse = () => {

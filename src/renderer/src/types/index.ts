@@ -28,12 +28,12 @@ export const MIN_PANEL_WIDTH = 200
 export const MAX_PANEL_WIDTH = 400
 
 export const CHART_CATEGORY_COLORS: Record<ChartCategory, string> = {
-  all: '#94a3b8',
-  taxi: '#67e8f9',
-  departure: '#fca5a5',
-  arrival: '#86efac',
-  approach: '#fdba74',
-  other: '#c4b5fd'
+  all: 'var(--color-indigo-500)',
+  taxi: 'var(--color-cyan-500)',
+  departure: 'var(--color-red-500)',
+  arrival: 'var(--color-green-500)',
+  approach: 'var(--color-orange-400)',
+  other: 'var(--color-purple-500)'
 }
 
 export const CHART_CATEGORY_CSS_VARS: Record<ChartCategory, string> = {
