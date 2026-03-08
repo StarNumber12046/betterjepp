@@ -2,13 +2,8 @@ name: Build and Release
 
 on:
   push:
-    branches:
-      - main
     tags:
-      - 'v*'
-  pull_request:
-    branches:
-      - main
+      - 'v*' # Only run the release job when a version tag is pushed
 
 jobs:
   build:
@@ -17,9 +12,11 @@ jobs:
         include:
           - os: windows-latest
             platform: win
-            ext: .exe
 
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: write # Crucial for uploading to releases
 
     steps:
       - name: Checkout
@@ -39,66 +36,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Windows
-        if: matrix.platform == 'win'
-        run: pnpm run build:win
-
-      - name: Build macOS
-        if: matrix.platform == 'mac'
-        run: pnpm run build:mac
-
-      - name: Build Linux
-        if: matrix.platform == 'linux'
-        run: pnpm run build:linux
-
-      - name: Get version
-        id: version
-        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Create ZIP (Windows)
-        if: matrix.platform == 'win'
-        run: |
-          cd dist
-          Compress-Archive -Path *.exe,*.yml -DestinationPath betterjepp-${{ steps.version.outputs.VERSION }}-win.zip
-
-      - name: Create ZIP (macOS)
-        if: matrix.platform == 'mac'
-        run: |
-          cd dist
-          zip betterjepp-${{ steps.version.outputs.VERSION }}-mac.zip *.dmg
-
-      - name: Create ZIP (Linux)
-        if: matrix.platform == 'linux'
-        run: |
-          cd dist
-          zip betterjepp-${{ steps.version.outputs.VERSION }}-linux.zip *.AppImage
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-${{ matrix.platform }}
-          path: dist/*.zip
-          retention-days: 5
-
-  release:
-    needs: build
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          merge-multiple: true
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: artifacts/*.zip
-          generate_release_notes: true
+      # This single step replaces the manual Zipping and Uploading
+      - name: Build and Publish
+        run: pnpm exec electron-builder --${{ matrix.platform }} --publish onTag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Artifact to Action
+        uses: actions/upload-artifact@v4
+        with:
+          # This names the artifact in the GitHub UI (e.g., betterjepp-win)
+          name: betterjepp-${{ matrix.platform }}
+          # Path to where electron-builder puts the files
+          path: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.AppImage
+            dist/latest*.yml
+          retention-days: 5
