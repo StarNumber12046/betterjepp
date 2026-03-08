@@ -34,7 +34,9 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
-  if (process.argv.includes('--debug')) {
+  console.log(process.argv)
+  if (process.argv.includes('--open-devtools')) {
+    console.log('open devtools')
     mainWindow.webContents.openDevTools()
   }
 }
