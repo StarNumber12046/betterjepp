@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*' # Only run the release job when a version tag is pushed
+    branches:
+      - main
 
 jobs:
   build:
