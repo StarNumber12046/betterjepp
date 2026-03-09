@@ -1,12 +1,13 @@
-import { Plane, Building2, Settings } from 'lucide-react'
+import { Plane, Search, Settings, TowerControl } from 'lucide-react'
 import { useUIStore } from '@/stores/uiStore'
 import { SidebarTab } from '@/types'
 import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 const topTabs: { id: SidebarTab; icon: typeof Plane; label: string }[] = [
+  { id: 'search', icon: Search, label: 'Search' },
   { id: 'flight', icon: Plane, label: 'Flight' },
-  { id: 'airport', icon: Building2, label: 'Airport' }
+  { id: 'airport', icon: TowerControl, label: 'Airport' }
 ]
 
 const bottomTabs: { id: SidebarTab; icon: typeof Plane; label: string }[] = [
@@ -16,9 +17,20 @@ const bottomTabs: { id: SidebarTab; icon: typeof Plane; label: string }[] = [
 export function Sidebar() {
   const activeTab = useUIStore((s) => s.activeTab)
   const setActiveTab = useUIStore((s) => s.setActiveTab)
+  const setSearchOpen = useUIStore((s) => s.setSearchOpen)
+  const setPanelCollapsed = useUIStore((s) => s.setPanelCollapsed)
+
+  const handleTabClick = (id: SidebarTab) => {
+    if (id === 'search') {
+      setSearchOpen(true)
+    } else {
+      setActiveTab(id)
+      setPanelCollapsed(id === 'settings')
+    }
+  }
 
   return (
-    <div className="w-12 bg-darker border-r border-border flex flex-col items-center py-2">
+    <div className="h-full w-12 bg-darker border-r border-border flex flex-col items-center py-2">
       <div className="flex flex-col items-center">
         {topTabs.map((tab) => {
           const Icon = tab.icon
@@ -28,7 +40,7 @@ export function Sidebar() {
             <Tooltip key={tab.id}>
               <TooltipTrigger asChild>
                 <button
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabClick(tab.id)}
                   className={cn(
                     'w-10 h-10 flex items-center justify-center rounded-lg transition-colors mb-1',
                     isActive
@@ -56,7 +68,7 @@ export function Sidebar() {
             <Tooltip key={tab.id}>
               <TooltipTrigger asChild>
                 <button
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabClick(tab.id)}
                   className={cn(
                     'w-10 h-10 flex items-center justify-center rounded-lg transition-colors mb-1',
                     isActive

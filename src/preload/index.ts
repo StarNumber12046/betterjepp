@@ -8,6 +8,11 @@ interface ExportResult {
 }
 
 const api = {
+  // Window controls
+  minimizeWindow: (): void => ipcRenderer.send('window-minimize'),
+  maximizeWindow: (): void => ipcRenderer.send('window-maximize'),
+  closeWindow: (): void => ipcRenderer.send('window-close'),
+
   // Settings
   getSettings: (): Promise<{
     apiUrl: string
@@ -33,7 +38,24 @@ const api = {
     chartName: string
   }): Promise<ExportResult> => ipcRenderer.invoke('export-chart', data),
 
-  getDefaultExportDir: (): Promise<string> => ipcRenderer.invoke('get-default-export-dir')
+  getDefaultExportDir: (): Promise<string> => ipcRenderer.invoke('get-default-export-dir'),
+
+  // Auto-updater
+  checkForUpdates: (): Promise<{ available: boolean; version?: string; error?: string }> =>
+    ipcRenderer.invoke('check-for-updates'),
+
+  downloadUpdate: (): Promise<{ success: boolean; error?: string }> =>
+    ipcRenderer.invoke('download-update'),
+
+  installUpdate: (): void => ipcRenderer.send('install-update'),
+
+  onUpdateAvailable: (callback: (version: string) => void) => {
+    ipcRenderer.on('update-available', (_event, version) => callback(version))
+  },
+
+  onUpdateDownloaded: (callback: (version: string) => void) => {
+    ipcRenderer.on('update-downloaded', (_event, version) => callback(version))
+  }
 }
 
 if (process.contextIsolated) {

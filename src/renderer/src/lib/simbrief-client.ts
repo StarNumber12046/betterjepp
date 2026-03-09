@@ -64,6 +64,9 @@ export interface SimBriefOFP {
   params: {
     user_id: string
   }
+  atc: {
+    callsign: string | null
+  }
 }
 
 const simbriefApi = ky.extend({

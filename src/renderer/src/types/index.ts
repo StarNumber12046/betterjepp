@@ -14,7 +14,7 @@ export interface AppSettings {
 
 export type ChartCategory = 'all' | 'taxi' | 'departure' | 'arrival' | 'approach' | 'other'
 
-export type SidebarTab = 'flight' | 'airport' | 'settings'
+export type SidebarTab = 'flight' | 'airport' | 'settings' | 'search'
 
 export const DEFAULT_SETTINGS: AppSettings = {
   apiUrl: 'http://localhost:8080',

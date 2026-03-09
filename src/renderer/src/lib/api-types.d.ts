@@ -48,11 +48,41 @@ export interface Airport {
   repair_types: string[]
 }
 
+export interface AirportSearchResult {
+  icao: string
+  iata: string
+  name: string
+  city: string
+  state: string
+  country_code: string
+}
+
+export interface AirportSearchResponse {
+  total: number
+  airports: AirportSearchResult[]
+}
+
 export interface HealthResponse {
   [key: string]: string
 }
 
 export interface paths {
+  '/api/v1/airports/search': {
+    get: {
+      parameters: {
+        query?: {
+          q?: string
+        }
+      }
+      responses: {
+        200: {
+          content: {
+            'application/json': AirportSearchResponse
+          }
+        }
+      }
+    }
+  }
   '/api/v1/airports/{icao}': {
     get: {
       parameters: {

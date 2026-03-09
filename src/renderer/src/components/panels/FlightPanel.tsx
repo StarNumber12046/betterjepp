@@ -39,9 +39,7 @@ function FlightInfo({ ofp }: { ofp: SimBriefOFP }) {
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Current Flight</h3>
-        {ofp.general?.flight_number && (
-          <Badge variant="secondary">{ofp.general.flight_number}</Badge>
-        )}
+        {ofp.atc.callsign && <Badge variant="secondary">{ofp.atc.callsign}</Badge>}
       </div>
 
       <div className="flex items-center gap-2 text-sm">

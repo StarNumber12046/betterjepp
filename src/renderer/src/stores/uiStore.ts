@@ -8,6 +8,8 @@ interface UIState {
   pdfRotation: number
   pdfPage: number
   pdfNumPages: number
+  pdfDarkMode: boolean
+  isSearchOpen: boolean
 
   setActiveTab: (tab: SidebarTab) => void
   togglePanel: () => void
@@ -16,7 +18,9 @@ interface UIState {
   setPdfRotation: (rotation: number) => void
   setPdfPage: (page: number) => void
   setPdfNumPages: (num: number) => void
+  togglePdfDarkMode: () => void
   resetPdfView: () => void
+  setSearchOpen: (open: boolean) => void
 }
 
 const DEFAULT_ZOOM = 1.0
@@ -30,6 +34,8 @@ export const useUIStore = create<UIState>()((set, get) => ({
   pdfRotation: 0,
   pdfPage: 1,
   pdfNumPages: 0,
+  pdfDarkMode: false,
+  isSearchOpen: false,
 
   setActiveTab: (tab: SidebarTab) => {
     set({ activeTab: tab })
@@ -62,12 +68,20 @@ export const useUIStore = create<UIState>()((set, get) => ({
     set({ pdfNumPages: num, pdfPage: 1 })
   },
 
+  togglePdfDarkMode: () => {
+    set((state) => ({ pdfDarkMode: !state.pdfDarkMode }))
+  },
+
   resetPdfView: () => {
     set({
       pdfZoom: DEFAULT_ZOOM,
       pdfRotation: 0,
       pdfPage: 1
     })
+  },
+
+  setSearchOpen: (open: boolean) => {
+    set({ isSearchOpen: open })
   }
 }))
 

@@ -1,16 +1,21 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { autoUpdater } from 'electron-updater'
 import icon from '../../resources/icon.png?asset'
 import { registerAllIpcHandlers } from './ipc'
 
+let mainWindow: BrowserWindow | null = null
+
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 900,
     show: false,
     autoHideMenuBar: true,
+    frame: false,
+    titleBarStyle: 'hidden',
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -19,7 +24,7 @@ function createWindow(): void {
   })
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow?.show()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -56,6 +61,50 @@ app.whenReady().then(() => {
 
   // Register IPC handlers
   registerAllIpcHandlers()
+
+  // Auto-updater setup
+  autoUpdater.autoDownload = false
+  autoUpdater.autoInstallOnAppQuit = true
+
+  // Check for updates on startup (only in production)
+  if (!is.dev) {
+    autoUpdater.checkForUpdates().catch((err) => console.error('Startup update check failed:', err))
+  }
+
+  ipcMain.handle('check-for-updates', async () => {
+    try {
+      const result = await autoUpdater.checkForUpdates()
+      return {
+        available: result?.updateInfo?.version !== app.getVersion(),
+        version: result?.updateInfo?.version
+      }
+    } catch (error) {
+      console.error('Update check failed:', error)
+      return { available: false, error: String(error) }
+    }
+  })
+
+  ipcMain.handle('download-update', async () => {
+    try {
+      await autoUpdater.downloadUpdate()
+      return { success: true }
+    } catch (error) {
+      console.error('Update download failed:', error)
+      return { success: false, error: String(error) }
+    }
+  })
+
+  ipcMain.handle('install-update', () => {
+    autoUpdater.quitAndInstall()
+  })
+
+  autoUpdater.on('update-available', (info) => {
+    mainWindow?.webContents.send('update-available', info.version)
+  })
+
+  autoUpdater.on('update-downloaded', (info) => {
+    mainWindow?.webContents.send('update-downloaded', info.version)
+  })
 
   createWindow()
 

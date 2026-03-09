@@ -1,17 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
-import {
-  RotateCw,
-  ZoomIn,
-  ZoomOut,
-  Maximize,
-  ChevronLeft,
-  ChevronRight,
-  Loader2
-} from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useChartsStore } from '@/stores/chartsStore'
-import { useUIStore, MIN_ZOOM, MAX_ZOOM } from '@/stores/uiStore'
-import { Button } from '@/components/ui/button'
+import { useUIStore } from '@/stores/uiStore'
 import { Badge } from '@/components/ui/badge'
 import { getApiBaseUrl } from '@/lib/api-client'
 
@@ -21,92 +12,6 @@ import 'react-pdf/dist/Page/TextLayer.css'
 import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl
-
-function PdfControls() {
-  const pdfZoom = useUIStore((s) => s.pdfZoom)
-  const pdfRotation = useUIStore((s) => s.pdfRotation)
-  const pdfPage = useUIStore((s) => s.pdfPage)
-  const pdfNumPages = useUIStore((s) => s.pdfNumPages)
-  const setPdfZoom = useUIStore((s) => s.setPdfZoom)
-  const setPdfRotation = useUIStore((s) => s.setPdfRotation)
-  const setPdfPage = useUIStore((s) => s.setPdfPage)
-
-  return (
-    <div className="flex items-center gap-1 bg-card/90 backdrop-blur-sm rounded-lg p-1 shadow-lg border border-border">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setPdfRotation(pdfRotation + 90)}
-        className="h-8 w-8"
-      >
-        <RotateCw className="w-4 h-4" />
-      </Button>
-
-      <Separator className="h-6 w-px bg-border mx-1" />
-
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setPdfZoom(pdfZoom - 0.25)}
-        disabled={pdfZoom <= MIN_ZOOM}
-        className="h-8 w-8"
-      >
-        <ZoomOut className="w-4 h-4" />
-      </Button>
-
-      <Badge variant="secondary" className="h-6 px-2 text-xs min-w-12 text-center">
-        {Math.round(pdfZoom * 100)}%
-      </Badge>
-
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setPdfZoom(pdfZoom + 0.25)}
-        disabled={pdfZoom >= MAX_ZOOM}
-        className="h-8 w-8"
-      >
-        <ZoomIn className="w-4 h-4" />
-      </Button>
-
-      <Button variant="ghost" size="icon" onClick={() => setPdfZoom(1)} className="h-8 w-8">
-        <Maximize className="w-4 h-4" />
-      </Button>
-
-      {pdfNumPages > 1 && (
-        <>
-          <Separator className="h-6 w-px bg-border mx-1" />
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setPdfPage(pdfPage - 1)}
-              disabled={pdfPage <= 1}
-              className="h-8 w-8"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            <span className="text-xs min-w-12 text-center">
-              {pdfPage} / {pdfNumPages}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setPdfPage(pdfPage + 1)}
-              disabled={pdfPage >= pdfNumPages}
-              className="h-8 w-8"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
-
-function Separator({ className }: { className?: string }) {
-  return <div className={className} />
-}
 
 function EmptyState() {
   const currentIcao = useChartsStore((s) => s.currentIcao)
@@ -148,6 +53,7 @@ export function ChartViewer() {
   const pdfZoom = useUIStore((s) => s.pdfZoom)
   const pdfRotation = useUIStore((s) => s.pdfRotation)
   const pdfPage = useUIStore((s) => s.pdfPage)
+  const pdfDarkMode = useUIStore((s) => s.pdfDarkMode)
   const setPdfNumPages = useUIStore((s) => s.setPdfNumPages)
   const resetPdfView = useUIStore((s) => s.resetPdfView)
 
@@ -179,10 +85,6 @@ export function ChartViewer() {
 
   return (
     <div id="chart-container" className="h-full flex flex-col bg-muted/30">
-      <div className="absolute top-4 right-4 z-10">
-        <PdfControls />
-      </div>
-
       <div className="flex-1 overflow-auto flex items-start justify-center p-6">
         <Document
           file={pdfUrl}
@@ -198,13 +100,15 @@ export function ChartViewer() {
             </div>
           }
         >
-          <Page
-            pageNumber={pdfPage}
-            scale={pdfZoom}
-            rotate={pdfRotation}
-            width={containerWidth}
-            className="shadow-lg"
-          />
+          <div style={pdfDarkMode ? { filter: 'invert(1)' } : undefined}>
+            <Page
+              pageNumber={pdfPage}
+              scale={pdfZoom}
+              rotate={pdfRotation}
+              width={containerWidth}
+              className="shadow-lg"
+            />
+          </div>
         </Document>
       </div>
 

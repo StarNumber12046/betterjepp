@@ -2,10 +2,12 @@ import { useEffect } from 'react'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@/lib/query-client'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { Header } from '@/components/layout/Header'
+import { Titlebar } from '@/components/layout/Titlebar'
+import { TopBar } from '@/components/layout/TopBar'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { CollapsiblePanel } from '@/components/layout/CollapsiblePanel'
 import { MainContent, PanelContent } from '@/components/layout/MainContent'
+import { Search } from '@/components/Search'
 import { useChartsStore } from '@/stores/chartsStore'
 import { rawFetch } from '@/lib/api-client'
 
@@ -28,14 +30,18 @@ function AppContent() {
 
   return (
     <div className="h-full flex flex-col">
-      <Header />
+      <Titlebar />
       <div className="flex-1 flex overflow-hidden">
         <Sidebar />
-        <CollapsiblePanel>
-          <PanelContent />
-        </CollapsiblePanel>
-        <MainContent />
+        <div className="flex-1 flex overflow-hidden relative">
+          <TopBar />
+          <CollapsiblePanel>
+            <PanelContent />
+          </CollapsiblePanel>
+          <MainContent />
+        </div>
       </div>
+      <Search />
     </div>
   )
 }

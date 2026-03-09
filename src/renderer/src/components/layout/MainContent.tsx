@@ -9,7 +9,13 @@ export function MainContent() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {activeTab === 'settings' ? <SettingsPanel /> : <ChartViewer />}
+      {activeTab === 'settings' ? (
+        <SettingsPanel />
+      ) : (
+        <div className="flex-1 flex flex-col overflow-hidden pt-10">
+          <ChartViewer />
+        </div>
+      )}
     </div>
   )
 }

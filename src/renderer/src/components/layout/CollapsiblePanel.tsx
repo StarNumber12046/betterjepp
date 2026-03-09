@@ -27,6 +27,7 @@ export function CollapsiblePanel({ children }: CollapsiblePanelProps) {
 
   useEffect(() => {
     if (!isResizing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalWidth(panelWidth || DEFAULT_PANEL_WIDTH)
     }
   }, [panelWidth, isResizing])
@@ -61,7 +62,7 @@ export function CollapsiblePanel({ children }: CollapsiblePanelProps) {
 
   if (panelCollapsed) {
     return (
-      <div className="w-10 bg-card border-r border-darker flex flex-col items-center py-2">
+      <div className="w-10 bg-card border-r border-darker flex flex-col items-center py-2 z-20">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -80,21 +81,22 @@ export function CollapsiblePanel({ children }: CollapsiblePanelProps) {
   }
 
   return (
-    <div
-      className={cn(
-        'relative bg-card border-r border-darker flex flex-col shrink-0 overflow-hidden',
-        isResizing && 'select-none'
-      )}
-      style={{ width: localWidth }}
-    >
-      <div className="flex-1 overflow-hidden">{children}</div>
-
+    <div className="relative flex shrink-0 z-20" style={{ width: localWidth }}>
       <div
-        className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors z-10"
-        onMouseDown={startResizing}
-      />
+        className={cn(
+          'w-full bg-card border-r border-darker flex flex-col overflow-hidden shadow-[4px_0_24px_-2px_rgba(0,0,0,0.3)]',
+          isResizing && 'select-none'
+        )}
+      >
+        <div className="flex-1 overflow-hidden">{children}</div>
 
-      <div className="absolute right-2 top-2 z-20">
+        <div
+          className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors z-10"
+          onMouseDown={startResizing}
+        />
+      </div>
+
+      <div className="absolute -right-7 top-2 z-30">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Save, FolderOpen, Check, Loader2 } from 'lucide-react'
+import { Save, FolderOpen, Check, Loader2, Activity, Download, RefreshCw } from 'lucide-react'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { getApiBaseUrl } from '@/lib/api-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
@@ -16,12 +17,35 @@ export function SettingsPanel() {
   const [exportDir, setExportDirLocal] = useState(settings.exportDir)
   const [saved, setSaved] = useState(false)
   const [selectingDir, setSelectingDir] = useState(false)
+  const [isConnected, setIsConnected] = useState<boolean | null>(null)
+  const [checkingUpdate, setCheckingUpdate] = useState(false)
+  const [updateInfo, setUpdateInfo] = useState<{
+    available: boolean
+    version?: string
+    error?: string
+  } | null>(null)
+  const [downloading, setDownloading] = useState(false)
+  const [updateDownloaded, setUpdateDownloaded] = useState(false)
 
   useEffect(() => {
     setApiUrlLocal(settings.apiUrl)
     setPilotIdLocal(settings.simbriefPilotId)
     setExportDirLocal(settings.exportDir)
   }, [settings])
+
+  useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        await fetch(`${getApiBaseUrl()}/health`)
+        setIsConnected(true)
+      } catch {
+        setIsConnected(false)
+      }
+    }
+    checkConnection()
+    const interval = setInterval(checkConnection, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   const handleSave = () => {
     setApiUrl(apiUrl)
@@ -52,6 +76,23 @@ export function SettingsPanel() {
     <div className="h-full overflow-auto">
       <div className="p-4 border-b border-border">
         <h2 className="font-semibold">Settings</h2>
+      </div>
+
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center gap-2">
+          <Activity
+            className={`w-4 h-4 ${
+              isConnected === null
+                ? 'text-muted-foreground'
+                : isConnected
+                  ? 'text-green-500'
+                  : 'text-red-500'
+            }`}
+          />
+          <span className="text-sm">
+            {isConnected === null ? 'Checking...' : isConnected ? 'Connected' : 'Disconnected'}
+          </span>
+        </div>
       </div>
 
       <div className="p-4 space-y-6 max-w-md">
