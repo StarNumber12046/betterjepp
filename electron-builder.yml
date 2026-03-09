@@ -42,3 +42,4 @@ publish:
   provider: github
   owner: StarNumber12046
   repo: betterjepp
+  releaseType: release
