@@ -47,6 +47,10 @@ export function SettingsPanel() {
     return () => clearInterval(interval)
   }, [])
 
+  useEffect(() => {
+    window.api.onUpdateDownloaded(() => setUpdateDownloaded(true))
+  }, [])
+
   const handleSave = () => {
     setApiUrl(apiUrl)
     setSimbriefPilotId(pilotId)
@@ -65,6 +69,35 @@ export function SettingsPanel() {
     } finally {
       setSelectingDir(false)
     }
+  }
+
+  const handleCheckUpdates = async () => {
+    setCheckingUpdate(true)
+    setUpdateInfo(null)
+    try {
+      const result = await window.api.checkForUpdates()
+      setUpdateInfo(result)
+    } catch (error) {
+      setUpdateInfo({ available: false, error: String(error) })
+    } finally {
+      setCheckingUpdate(false)
+    }
+  }
+
+  const handleDownloadUpdate = async () => {
+    setDownloading(true)
+    try {
+      const result = await window.api.downloadUpdate()
+      if (!result.success) {
+        setUpdateInfo({ available: true, error: result.error })
+      }
+    } finally {
+      setDownloading(false)
+    }
+  }
+
+  const handleInstallUpdate = () => {
+    window.api.installUpdate()
   }
 
   const hasChanges =
@@ -171,6 +204,50 @@ export function SettingsPanel() {
             BetterJepp - A flight simulation chart viewer with SimBrief integration.
           </p>
           <p className="text-xs text-muted-foreground">Version 1.0.0</p>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium">Updates</h3>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCheckUpdates}
+              disabled={checkingUpdate}
+            >
+              {checkingUpdate ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4 mr-2" />
+              )}
+              Check for Updates
+            </Button>
+          </div>
+          {updateInfo?.available && (
+            <div className="space-y-2">
+              <p className="text-xs text-green-500">Update {updateInfo.version} available!</p>
+              {updateDownloaded ? (
+                <Button size="sm" onClick={handleInstallUpdate}>
+                  Install and Restart
+                </Button>
+              ) : (
+                <Button size="sm" onClick={handleDownloadUpdate} disabled={downloading}>
+                  {downloading ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4 mr-2" />
+                  )}
+                  Download Update
+                </Button>
+              )}
+            </div>
+          )}
+          {updateInfo && !updateInfo.available && !updateInfo.error && (
+            <p className="text-xs text-muted-foreground">You&apos;re up to date!</p>
+          )}
+          {updateInfo?.error && <p className="text-xs text-red-500">Error: {updateInfo.error}</p>}
         </div>
       </div>
     </div>
