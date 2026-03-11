@@ -3,7 +3,6 @@ import { Document, Page, pdfjs } from 'react-pdf'
 import { Loader2 } from 'lucide-react'
 import { useChartsStore } from '@/stores/chartsStore'
 import { useUIStore } from '@/stores/uiStore'
-import { Badge } from '@/components/ui/badge'
 import { getApiBaseUrl } from '@/lib/api-client'
 
 import 'react-pdf/dist/Page/AnnotationLayer.css'
@@ -110,13 +109,6 @@ export function ChartViewer() {
             />
           </div>
         </Document>
-      </div>
-
-      <div className="h-12 border-t border-border flex items-center justify-center px-4 gap-4 bg-card">
-        <span className="text-sm text-muted-foreground">{currentChart.proc_id}</span>
-        <Badge variant="outline" className="text-xs">
-          {currentChart.type_name}
-        </Badge>
       </div>
     </div>
   )

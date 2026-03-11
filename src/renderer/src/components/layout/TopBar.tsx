@@ -9,8 +9,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Moon,
-  Sun
+  Sun,
+  Cross,
+  X,
+  Pin
 } from 'lucide-react'
+import { useChartsStore } from '@renderer/stores/chartsStore'
+import { cn } from '@renderer/lib/utils'
 
 function Separator({ className }: { className?: string }) {
   return <div className={`bg-border ${className}`} />
@@ -27,6 +32,13 @@ export function TopBar() {
   const setPdfPage = useUIStore((s) => s.setPdfPage)
   const pdfDarkMode = useUIStore((s) => s.pdfDarkMode)
   const togglePdfDarkMode = useUIStore((s) => s.togglePdfDarkMode)
+  const setCurrentChart = useChartsStore((s) => s.setCurrentChart)
+  const currentChart = useChartsStore((s) => s.currentChart)
+  const pinChart = useChartsStore((s) => s.pinChart)
+  const unpinChart = useChartsStore((s) => s.unpinChart)
+  const isPinned =
+    useChartsStore((s) => s.isPinned(currentChart?.icao ?? '', currentChart?.filename ?? '')) ??
+    false
 
   if (pdfNumPages === 0 || activeTab === 'settings') {
     return null
@@ -35,6 +47,21 @@ export function TopBar() {
   return (
     <div className="absolute top-0 right-0 left-0 h-10 bg-background flex items-center justify-end px-4 z-10">
       <div className="flex items-center gap-1">
+        {currentChart && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={
+              isPinned
+                ? () => unpinChart(currentChart.icao, currentChart.filename)
+                : () => pinChart(currentChart)
+            }
+            className={cn('h-7 w-7', isPinned && 'bg-accent border border-chart-list-selected')}
+          >
+            <Pin className="w-3.5 h-3.5" />
+          </Button>
+        )}
+
         <Button
           variant="ghost"
           size="icon"
@@ -78,6 +105,15 @@ export function TopBar() {
 
         <Button variant="ghost" size="icon" onClick={togglePdfDarkMode} className="h-7 w-7">
           {pdfDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setCurrentChart(null)}
+          className="h-7 w-7"
+        >
+          <X className="w-3.5 h-3.5" />
         </Button>
 
         {pdfNumPages > 1 && (

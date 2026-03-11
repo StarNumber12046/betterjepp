@@ -59,10 +59,15 @@ export function SettingsPanel() {
     window.api.onUpdateDownloaded(() => setUpdateDownloaded(true))
   }, [])
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setApiUrl(apiUrl)
     setSimbriefPilotId(pilotId)
     setExportDir(exportDir)
+    await window.api.saveSettings({
+      apiUrl,
+      simbriefPilotId: pilotId,
+      exportDir
+    })
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }

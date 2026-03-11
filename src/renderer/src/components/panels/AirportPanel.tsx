@@ -1,20 +1,19 @@
 import { useState, useEffect, useMemo } from 'react'
 import {
   Search,
-  Star,
   MoreVertical,
   Download,
   Loader2,
-  PinIcon,
   MapPin,
   Plane,
   Clock,
   Fuel,
   Wrench,
   SlidersHorizontal,
-  FanIcon
+  FanIcon,
+  Pin
 } from 'lucide-react'
-import { api } from '@/lib/api-client'
+import { api, downloadChartPdf } from '@/lib/api-client'
 import { useChartsStore, categorizeChart, isVfrChart } from '@/stores/chartsStore'
 import { ChartCategory, ChartFlight, CHART_CATEGORY_COLORS } from '@/types'
 import { Input } from '@/components/ui/input'
@@ -57,6 +56,7 @@ function ChartListItem({
   const borderColor = CHART_CATEGORY_COLORS[category]
 
   const handlePinToggle = (e: React.MouseEvent) => {
+    console.log('handlePinToggle')
     e.stopPropagation()
     if (isPinned) {
       unpinChart(chart.icao, chart.filename)
@@ -81,38 +81,32 @@ function ChartListItem({
       )}
       style={{ borderLeftColor: borderColor }}
     >
-      <button onClick={handlePinToggle} className="flex-shrink-0">
-        <Star
-          className={cn(
-            'w-4 h-4 transition-colors',
-            isPinned
-              ? 'fill-yellow-400 text-yellow-400'
-              : 'text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-yellow-400'
-          )}
-        />
-      </button>
-
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm whitespace-nowrap">{chart.proc_id}</div>
-        <div className="text-xs text-muted-foreground whitespace-nowrap">
+        <div className="font-medium text-sm truncate">{chart.proc_id}</div>
+        <div className="text-xs text-muted-foreground truncate">
           {chart.type_name || chart.chart_type}
         </div>
       </div>
-
+      <Button
+        onClick={handlePinToggle}
+        variant="ghost"
+        size="icon"
+        className={cn('h-6 w-6', isPinned ? 'bg-accent border border-chart-list-selected' : '')}
+      >
+        <Pin className="w-4 h-4 transition-colors" />
+      </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-          <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100">
+          <Button variant="ghost" size="icon" className="h-6 w-6">
             <MoreVertical className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>
+        <DropdownMenuContent align="end" className="border-border">
+          <DropdownMenuItem
+            onClick={() => downloadChartPdf(chart.icao, chart.filename, chart.proc_id)}
+          >
             <Download className="w-4 h-4 mr-2" />
             Export PDF
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <PinIcon className="w-4 h-4 mr-2" />
-            Pin Chart
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -246,12 +240,12 @@ export function AirportPanel() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="flex-shrink-0 bg-pill border-0 shadow-none h-9 w-9"
+                  className="shrink-0 bg-pill  border-0 shadow-none h-9 w-9"
                 >
                   <SlidersHorizontal className="w-4 h-4 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-36">
+              <DropdownMenuContent align="end" className="w-36 border-border">
                 {(['all', 'vfr', 'ifr'] as ChartFlight[]).map((flight) => {
                   const isActive = flightFilter === flight
                   const label = flight === 'all' ? 'All Charts' : flight.toUpperCase()
@@ -290,7 +284,7 @@ export function AirportPanel() {
                     key={cat.id}
                     onClick={() => setCategoryFilter(cat.id)}
                     className={cn(
-                      'h-7 px-2 text-xs flex-shrink-0 rounded-md font-medium transition-colors',
+                      'h-7 px-2 text-xs shrink-0 rounded-md font-medium transition-colors',
                       isActive ? 'text-white' : 'bg-transparent hover:bg-sky-950'
                     )}
                     style={isActive ? { backgroundColor: color } : { color: color }}
@@ -303,7 +297,7 @@ export function AirportPanel() {
           </div>
 
           <div className="flex-1 overflow-x-auto overflow-y-auto scrollbar-hide">
-            <div className="p-2 min-w-max">
+            <div className="p-2">
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
@@ -453,8 +447,8 @@ function InfoRow({
   if (!value) return null
   return (
     <div className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50">
-      <span className="text-muted-foreground flex-shrink-0">{icon}</span>
-      <span className="text-xs text-muted-foreground flex-shrink-0 w-24">{label}</span>
+      <span className="text-muted-foreground shrink-0">{icon}</span>
+      <span className="text-xs text-muted-foreground shrink-0 w-24">{label}</span>
       <span className="text-sm font-medium truncate">{value}</span>
     </div>
   )

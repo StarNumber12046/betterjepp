@@ -84,16 +84,28 @@ export function registerExportHandlers() {
         chartName: string
       }
     ) => {
+      console.log('[Export] IPC received:', {
+        exportDir,
+        icao,
+        chartName,
+        pdfDataLength: pdfData?.length
+      })
       try {
         const dir = join(exportDir, icao)
+        console.log('[Export] Creating directory:', dir)
+
         await mkdir(dir, { recursive: true })
 
         const filePath = join(dir, `${chartName}.pdf`)
+        console.log('[Export] Writing to file:', filePath)
+
         const buffer = Buffer.from(pdfData)
         await writeFile(filePath, buffer)
 
+        console.log('[Export] Success! File saved to:', filePath)
         return { success: true, path: filePath }
       } catch (error) {
+        console.error('[Export] Error:', error)
         return { success: false, error: String(error) }
       }
     }

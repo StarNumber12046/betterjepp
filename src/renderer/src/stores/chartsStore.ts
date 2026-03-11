@@ -13,7 +13,7 @@ interface ChartsState {
   searchQuery: string
 
   setCurrentIcao: (icao: string) => void
-  setCurrentChart: (chart: ChartInfo | null) => void
+  setCurrentChart: (chart: Partial<ChartInfo> | null) => void
   setChartTypes: (types: ChartType[]) => void
   getTypeName: (code: string) => string
   pinChart: (chart: PinnedChart) => void
@@ -39,8 +39,8 @@ export const useChartsStore = create<ChartsState>()(
         set({ currentIcao: icao.toUpperCase(), currentChart: null })
       },
 
-      setCurrentChart: (chart: ChartInfo | null) => {
-        set({ currentChart: chart })
+      setCurrentChart: (chart: Partial<ChartInfo> | null) => {
+        set({ currentChart: chart as ChartInfo | null })
       },
 
       setChartTypes: (types: ChartType[]) => {
@@ -95,7 +95,7 @@ export const useChartsStore = create<ChartsState>()(
   )
 )
 
-export function categorizeChart(chart: ChartInfo): ChartCategory {
+export function categorizeChart(chart: { chart_type?: string; type_name?: string }): ChartCategory {
   const type = chart.chart_type?.toUpperCase() || ''
   const typeName = chart.type_name?.toUpperCase() || ''
 
@@ -126,7 +126,7 @@ export function categorizeChart(chart: ChartInfo): ChartCategory {
   return 'other'
 }
 
-export function isVfrChart(chart: ChartInfo): boolean {
+export function isVfrChart(chart: { chart_type?: string }): boolean {
   const chartType = chart.chart_type?.toUpperCase() || ''
   return chartType.startsWith('6')
 }

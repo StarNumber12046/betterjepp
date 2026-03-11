@@ -9,10 +9,12 @@ import { CollapsiblePanel } from '@/components/layout/CollapsiblePanel'
 import { MainContent, PanelContent } from '@/components/layout/MainContent'
 import { Search } from '@/components/Search'
 import { useChartsStore } from '@/stores/chartsStore'
+import { useSettingsStore } from '@/stores/settingsStore'
 import { rawFetch } from '@/lib/api-client'
 
 function AppContent() {
   const setChartTypes = useChartsStore((s) => s.setChartTypes)
+  const loadSettings = useSettingsStore((s) => s.loadSettings)
 
   useEffect(() => {
     const loadChartTypes = async () => {
@@ -27,6 +29,18 @@ function AppContent() {
     }
     loadChartTypes()
   }, [setChartTypes])
+
+  useEffect(() => {
+    const loadMainProcessSettings = async () => {
+      try {
+        const settings = await window.api.getSettings()
+        loadSettings(settings)
+      } catch (error) {
+        console.error('Failed to load settings from main process:', error)
+      }
+    }
+    loadMainProcessSettings()
+  }, [loadSettings])
 
   return (
     <div className="h-full flex flex-col">

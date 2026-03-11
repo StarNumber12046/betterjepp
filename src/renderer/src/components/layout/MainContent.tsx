@@ -3,6 +3,7 @@ import { FlightPanel } from '@/components/panels/FlightPanel'
 import { AirportPanel } from '@/components/panels/AirportPanel'
 import { SettingsPanel } from '@/components/panels/SettingsPanel'
 import { ChartViewer } from '@/components/charts/ChartViewer'
+import { PinnedChartsBar } from '@/components/charts/PinnedChartsBar'
 
 export function MainContent() {
   const activeTab = useUIStore((s) => s.activeTab)
@@ -16,6 +17,7 @@ export function MainContent() {
           <ChartViewer />
         </div>
       )}
+      <PinnedChartsBar />
     </div>
   )
 }
