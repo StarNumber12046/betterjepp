@@ -1,6 +1,9 @@
 # betterjepp
 
-An Electron application with React and TypeScript
+A good way to view Jeppesen charts
+
+## Installation
+A video tutorial for installation is available [on YouTube](https://youtu.be/UUESsbvshbc)
 
 ## Recommended IDE Setup
 
