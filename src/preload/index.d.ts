@@ -5,12 +5,21 @@ interface AppSettings {
   simbriefPilotId: string
   exportDir: string
   panelWidth: number
+  georefEnabled: boolean
+  xplaneSendPort: number
+  xplaneListenPort: number
 }
 
 interface ExportResult {
   success: boolean
   path?: string
   error?: string
+}
+
+interface AircraftPosition {
+  lat: number
+  lon: number
+  heading: number
 }
 
 interface Api {
@@ -32,6 +41,12 @@ interface Api {
   installUpdate: () => Promise<void>
   onUpdateAvailable: (callback: (version: string) => void) => void
   onUpdateDownloaded: (callback: (version: string) => void) => void
+  setGeorefEnabled: (enabled: boolean) => Promise<boolean>
+  setXplanePorts: (sendPort: number, listenPort: number) => Promise<boolean>
+  getXplaneConnected: () => Promise<boolean>
+  onXplanePosition: (callback: (position: AircraftPosition) => void) => void
+  onXplaneConnected: (callback: (connected: boolean) => void) => void
+  onWindowFocused: (callback: (focused: boolean) => void) => void
 }
 
 declare global {

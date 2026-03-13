@@ -2,6 +2,7 @@ import { ipcMain, dialog, BrowserWindow, app } from 'electron'
 import { join } from 'path'
 import { writeFile, mkdir, readFile } from 'fs/promises'
 import { existsSync } from 'fs'
+import { xplaneService } from '../xplane'
 
 let settingsPath: string
 
@@ -10,13 +11,19 @@ export interface AppSettings {
   simbriefPilotId: string
   exportDir: string
   panelWidth: number
+  georefEnabled: boolean
+  xplaneSendPort: number
+  xplaneListenPort: number
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   apiUrl: 'http://localhost:8080',
   simbriefPilotId: '',
   exportDir: '',
-  panelWidth: 280
+  panelWidth: 280,
+  georefEnabled: true,
+  xplaneSendPort: 49000,
+  xplaneListenPort: 49001
 }
 
 async function loadSettings(): Promise<AppSettings> {
@@ -137,8 +144,25 @@ export function registerWindowControlHandlers() {
   })
 }
 
+export function registerXplaneHandlers() {
+  ipcMain.handle('set-georef-enabled', async (_, enabled: boolean) => {
+    xplaneService.setGeorefEnabled(enabled)
+    return true
+  })
+
+  ipcMain.handle('set-xplane-ports', async (_, sendPort: number, listenPort: number) => {
+    await xplaneService.updatePorts(sendPort, listenPort)
+    return true
+  })
+
+  ipcMain.handle('get-xplane-connected', () => {
+    return xplaneService.isConnected()
+  })
+}
+
 export function registerAllIpcHandlers() {
   registerSettingsHandlers()
   registerExportHandlers()
   registerWindowControlHandlers()
+  registerXplaneHandlers()
 }

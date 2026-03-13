@@ -9,6 +9,9 @@ interface SettingsState {
   setSimbriefPilotId: (id: string) => void
   setExportDir: (dir: string) => void
   setPanelWidth: (width: number) => void
+  setGeorefEnabled: (enabled: boolean) => void
+  setXplaneSendPort: (port: number) => void
+  setXplaneListenPort: (port: number) => void
   loadSettings: (settings: Partial<AppSettings>) => void
 }
 
@@ -42,12 +45,34 @@ export const useSettingsStore = create<SettingsState>()(
         }))
       },
 
+      setGeorefEnabled: (enabled: boolean) => {
+        set((state) => ({
+          settings: { ...state.settings, georefEnabled: enabled }
+        }))
+        window.api.setGeorefEnabled(enabled)
+      },
+
+      setXplaneSendPort: (port: number) => {
+        set((state) => ({
+          settings: { ...state.settings, xplaneSendPort: port }
+        }))
+      },
+
+      setXplaneListenPort: (port: number) => {
+        set((state) => ({
+          settings: { ...state.settings, xplaneListenPort: port }
+        }))
+      },
+
       loadSettings: (newSettings: Partial<AppSettings>) => {
         set((state) => ({
           settings: { ...state.settings, ...newSettings }
         }))
         if (newSettings.apiUrl) {
           updateApiBaseUrl(newSettings.apiUrl)
+        }
+        if (newSettings.georefEnabled !== undefined) {
+          window.api.setGeorefEnabled(newSettings.georefEnabled)
         }
       }
     }),

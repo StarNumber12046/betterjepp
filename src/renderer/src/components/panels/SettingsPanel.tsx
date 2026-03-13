@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Save, FolderOpen, Check, Loader2, Activity, Download, RefreshCw } from 'lucide-react'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useGeorefStore } from '@/stores/georefStore'
 import { getApiBaseUrl } from '@/lib/api-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,10 +12,17 @@ export function SettingsPanel() {
   const setApiUrl = useSettingsStore((s) => s.setApiUrl)
   const setSimbriefPilotId = useSettingsStore((s) => s.setSimbriefPilotId)
   const setExportDir = useSettingsStore((s) => s.setExportDir)
+  const setGeorefEnabled = useSettingsStore((s) => s.setGeorefEnabled)
+  const setXplaneSendPort = useSettingsStore((s) => s.setXplaneSendPort)
+  const setXplaneListenPort = useSettingsStore((s) => s.setXplaneListenPort)
+  const xplaneConnected = useGeorefStore((s) => s.xplaneConnected)
 
   const [apiUrl, setApiUrlLocal] = useState(settings.apiUrl)
   const [pilotId, setPilotIdLocal] = useState(settings.simbriefPilotId)
   const [exportDir, setExportDirLocal] = useState(settings.exportDir)
+  const [georefEnabled, setGeorefEnabledLocal] = useState(settings.georefEnabled)
+  const [xplaneSendPort, setXplaneSendPortLocal] = useState(settings.xplaneSendPort)
+  const [xplaneListenPort, setXplaneListenPortLocal] = useState(settings.xplaneListenPort)
   const [saved, setSaved] = useState(false)
   const [selectingDir, setSelectingDir] = useState(false)
   const [isConnected, setIsConnected] = useState<boolean | null>(null)
@@ -31,6 +39,9 @@ export function SettingsPanel() {
     setApiUrlLocal(settings.apiUrl)
     setPilotIdLocal(settings.simbriefPilotId)
     setExportDirLocal(settings.exportDir)
+    setGeorefEnabledLocal(settings.georefEnabled)
+    setXplaneSendPortLocal(settings.xplaneSendPort)
+    setXplaneListenPortLocal(settings.xplaneListenPort)
   }, [settings])
 
   useEffect(() => {
@@ -38,13 +49,11 @@ export function SettingsPanel() {
       try {
         const res = await fetch(`${getApiBaseUrl()}/health`)
         const ver: string = (await res.json()).version.split('.')
-        if (parseInt(ver[0]) >= 1 && parseInt(ver[1]) >= 3) {
+        if (parseInt(ver[0]) >= 2 && parseInt(ver[1]) >= 1) {
           setIsConnected(true)
         } else {
           setIsConnected(false)
-          alert(
-            'Please update the API by downloading the latest version, as the current version is not supported.'
-          )
+          alert('Please update the API to version 2.1 or later.')
         }
       } catch {
         setIsConnected(false)
@@ -63,11 +72,20 @@ export function SettingsPanel() {
     setApiUrl(apiUrl)
     setSimbriefPilotId(pilotId)
     setExportDir(exportDir)
+    setGeorefEnabled(georefEnabled)
+    setXplaneSendPort(xplaneSendPort)
+    setXplaneListenPort(xplaneListenPort)
     await window.api.saveSettings({
       apiUrl,
       simbriefPilotId: pilotId,
-      exportDir
+      exportDir,
+      georefEnabled,
+      xplaneSendPort,
+      xplaneListenPort
     })
+    if (georefEnabled) {
+      await window.api.setXplanePorts(xplaneSendPort, xplaneListenPort)
+    }
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -116,7 +134,10 @@ export function SettingsPanel() {
   const hasChanges =
     apiUrl !== settings.apiUrl ||
     pilotId !== settings.simbriefPilotId ||
-    exportDir !== settings.exportDir
+    exportDir !== settings.exportDir ||
+    georefEnabled !== settings.georefEnabled ||
+    xplaneSendPort !== settings.xplaneSendPort ||
+    xplaneListenPort !== settings.xplaneListenPort
 
   return (
     <div className="h-full overflow-auto">
@@ -188,6 +209,66 @@ export function SettingsPanel() {
           <p className="text-xs text-muted-foreground">
             Charts will be exported to {'{dir}/{ICAO}/{chart_name}.pdf'}
           </p>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium">Georeferencing</h3>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="georef-enabled"
+              checked={georefEnabled}
+              onChange={(e) => setGeorefEnabledLocal(e.target.checked)}
+              className="w-4 h-4"
+            />
+            <label htmlFor="georef-enabled" className="text-sm">
+              Enable Georeferencing
+            </label>
+          </div>
+
+          {georefEnabled && (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">XPlane Send Port</label>
+                <Input
+                  type="number"
+                  value={xplaneSendPort}
+                  onChange={(e) => setXplaneSendPortLocal(parseInt(e.target.value) || 49000)}
+                  placeholder="49000"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Port to send RREF requests to XPlane (default: 49000)
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">XPlane Listen Port</label>
+                <Input
+                  type="number"
+                  value={xplaneListenPort}
+                  onChange={(e) => setXplaneListenPortLocal(parseInt(e.target.value) || 49001)}
+                  placeholder="49001"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Port to receive RREF responses from XPlane (default: 49001)
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-3 h-3 rounded-full ${
+                    xplaneConnected ? 'bg-green-500' : 'bg-gray-400'
+                  }`}
+                />
+                <span className="text-sm">
+                  {xplaneConnected ? 'Connected to XPlane' : 'XPlane not connected'}
+                </span>
+              </div>
+            </>
+          )}
         </div>
 
         <Separator />

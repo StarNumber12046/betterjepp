@@ -4,6 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { autoUpdater } from 'electron-updater'
 import icon from '../../resources/icon.png?asset'
 import { registerAllIpcHandlers } from './ipc'
+import { xplaneService } from './xplane'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -25,6 +26,16 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
+    xplaneService.setMainWindow(mainWindow!)
+    xplaneService.start(49000, 49001).catch(console.error)
+  })
+
+  mainWindow.on('focus', () => {
+    xplaneService.setWindowFocused(true)
+  })
+
+  mainWindow.on('blur', () => {
+    xplaneService.setWindowFocused(false)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

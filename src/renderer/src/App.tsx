@@ -10,6 +10,7 @@ import { MainContent, PanelContent } from '@/components/layout/MainContent'
 import { Search } from '@/components/Search'
 import { useChartsStore } from '@/stores/chartsStore'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { initGeorefListeners } from '@/stores/georefStore'
 import { rawFetch } from '@/lib/api-client'
 
 function AppContent() {
@@ -41,6 +42,10 @@ function AppContent() {
     }
     loadMainProcessSettings()
   }, [loadSettings])
+
+  useEffect(() => {
+    initGeorefListeners()
+  }, [])
 
   return (
     <div className="h-full flex flex-col">

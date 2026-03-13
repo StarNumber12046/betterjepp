@@ -10,6 +10,9 @@ export interface AppSettings {
   simbriefPilotId: string
   exportDir: string
   panelWidth: number
+  georefEnabled: boolean
+  xplaneSendPort: number
+  xplaneListenPort: number
 }
 
 export type ChartCategory = 'all' | 'taxi' | 'departure' | 'arrival' | 'approach' | 'other'
@@ -28,7 +31,10 @@ export const DEFAULT_SETTINGS: AppSettings = {
   apiUrl: 'http://localhost:8080',
   simbriefPilotId: '',
   exportDir: '',
-  panelWidth: 280
+  panelWidth: 280,
+  georefEnabled: true,
+  xplaneSendPort: 49000,
+  xplaneListenPort: 49001
 }
 
 export const DEFAULT_PANEL_WIDTH = 280

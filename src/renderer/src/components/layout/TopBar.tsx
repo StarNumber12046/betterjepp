@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Moon,
   Sun,
-  Cross,
   X,
   Pin
 } from 'lucide-react'

@@ -8,17 +8,18 @@ interface ExportResult {
 }
 
 const api = {
-  // Window controls
   minimizeWindow: (): void => ipcRenderer.send('window-minimize'),
   maximizeWindow: (): void => ipcRenderer.send('window-maximize'),
   closeWindow: (): void => ipcRenderer.send('window-close'),
 
-  // Settings
   getSettings: (): Promise<{
     apiUrl: string
     simbriefPilotId: string
     exportDir: string
     panelWidth: number
+    georefEnabled: boolean
+    xplaneSendPort: number
+    xplaneListenPort: number
   }> => ipcRenderer.invoke('get-settings'),
 
   saveSettings: (settings: {
@@ -26,9 +27,11 @@ const api = {
     simbriefPilotId?: string
     exportDir?: string
     panelWidth?: number
+    georefEnabled?: boolean
+    xplaneSendPort?: number
+    xplaneListenPort?: number
   }): Promise<boolean> => ipcRenderer.invoke('save-settings', settings),
 
-  // Export
   selectDirectory: (): Promise<string | null> => ipcRenderer.invoke('select-directory'),
 
   exportChart: (data: {
@@ -40,7 +43,6 @@ const api = {
 
   getDefaultExportDir: (): Promise<string> => ipcRenderer.invoke('get-default-export-dir'),
 
-  // Auto-updater
   checkForUpdates: (): Promise<{ available: boolean; version?: string; error?: string }> =>
     ipcRenderer.invoke('check-for-updates'),
 
@@ -55,6 +57,28 @@ const api = {
 
   onUpdateDownloaded: (callback: (version: string) => void) => {
     ipcRenderer.on('update-downloaded', (_event, version) => callback(version))
+  },
+
+  setGeorefEnabled: (enabled: boolean): Promise<boolean> =>
+    ipcRenderer.invoke('set-georef-enabled', enabled),
+
+  setXplanePorts: (sendPort: number, listenPort: number): Promise<boolean> =>
+    ipcRenderer.invoke('set-xplane-ports', sendPort, listenPort),
+
+  getXplaneConnected: (): Promise<boolean> => ipcRenderer.invoke('get-xplane-connected'),
+
+  onXplanePosition: (
+    callback: (position: { lat: number; lon: number; heading: number }) => void
+  ) => {
+    ipcRenderer.on('xplane-position', (_event, position) => callback(position))
+  },
+
+  onXplaneConnected: (callback: (connected: boolean) => void) => {
+    ipcRenderer.on('xplane-connected', (_event, connected) => callback(connected))
+  },
+
+  onWindowFocused: (callback: (focused: boolean) => void) => {
+    ipcRenderer.on('window-focused', (_event, focused) => callback(focused))
   }
 }
 

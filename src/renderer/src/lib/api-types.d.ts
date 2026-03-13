@@ -16,6 +16,59 @@ export interface ChartInfo {
   date_eff: string
   sheet_id: string
   has_tcl: boolean
+  is_vfr: boolean
+}
+
+export interface ChartBounds {
+  left: number
+  top: number
+  right: number
+  bottom: number
+  width: number
+  height: number
+}
+
+export interface GeoRefStatus {
+  georeferenced: boolean
+  bounds: ChartBounds
+}
+
+export interface CoordToPixelRequest {
+  latitude: number
+  longitude: number
+}
+
+export interface CoordToPixelResponse {
+  x: number
+  y: number
+  error?: string
+}
+
+export interface BatchCoordToPixelRequest {
+  points: CoordToPixelRequest[]
+}
+
+export interface BatchCoordToPixelResponse {
+  points: CoordToPixelResponse[]
+}
+
+export interface PixelToCoordRequest {
+  x: number
+  y: number
+}
+
+export interface PixelToCoordResponse {
+  latitude: number
+  longitude: number
+  error?: string
+}
+
+export interface BatchPixelToCoordRequest {
+  points: PixelToCoordRequest[]
+}
+
+export interface BatchPixelToCoordResponse {
+  points: PixelToCoordResponse[]
 }
 
 export interface ChartList {
@@ -153,6 +206,111 @@ export interface paths {
         200: {
           content: {
             'application/pdf': Blob
+          }
+        }
+      }
+    }
+  }
+  '/api/v1/charts/{icao}/geo/status/{filename}': {
+    get: {
+      parameters: {
+        path: {
+          icao: string
+          filename: string
+        }
+      }
+      responses: {
+        200: {
+          content: {
+            'application/json': GeoRefStatus
+          }
+        }
+      }
+    }
+  }
+  '/api/v1/charts/{icao}/geo/coord2pixel/{filename}': {
+    post: {
+      parameters: {
+        path: {
+          icao: string
+          filename: string
+        }
+      }
+      requestBody: {
+        content: {
+          'application/json': CoordToPixelRequest
+        }
+      }
+      responses: {
+        200: {
+          content: {
+            'application/json': CoordToPixelResponse
+          }
+        }
+      }
+    }
+  }
+  '/api/v1/charts/{icao}/geo/pixel2coord/{filename}': {
+    post: {
+      parameters: {
+        path: {
+          icao: string
+          filename: string
+        }
+      }
+      requestBody: {
+        content: {
+          'application/json': PixelToCoordRequest
+        }
+      }
+      responses: {
+        200: {
+          content: {
+            'application/json': PixelToCoordResponse
+          }
+        }
+      }
+    }
+  }
+  '/api/v1/charts/{icao}/geo/batch-coord2pixel/{filename}': {
+    post: {
+      parameters: {
+        path: {
+          icao: string
+          filename: string
+        }
+      }
+      requestBody: {
+        content: {
+          'application/json': BatchCoordToPixelRequest
+        }
+      }
+      responses: {
+        200: {
+          content: {
+            'application/json': BatchCoordToPixelResponse
+          }
+        }
+      }
+    }
+  }
+  '/api/v1/charts/{icao}/geo/batch-pixel2coord/{filename}': {
+    post: {
+      parameters: {
+        path: {
+          icao: string
+          filename: string
+        }
+      }
+      requestBody: {
+        content: {
+          'application/json': BatchPixelToCoordRequest
+        }
+      }
+      responses: {
+        200: {
+          content: {
+            'application/json': BatchPixelToCoordResponse
           }
         }
       }
