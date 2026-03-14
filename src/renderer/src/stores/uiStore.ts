@@ -9,6 +9,7 @@ interface UIState {
   pdfPage: number
   pdfNumPages: number
   pdfDarkMode: boolean
+  showPositionArrow: boolean
   isSearchOpen: boolean
 
   setActiveTab: (tab: SidebarTab) => void
@@ -19,6 +20,7 @@ interface UIState {
   setPdfPage: (page: number) => void
   setPdfNumPages: (num: number) => void
   togglePdfDarkMode: () => void
+  togglePositionArrow: () => void
   resetPdfView: () => void
   setSearchOpen: (open: boolean) => void
 }
@@ -35,6 +37,7 @@ export const useUIStore = create<UIState>()((set, get) => ({
   pdfPage: 1,
   pdfNumPages: 0,
   pdfDarkMode: false,
+  showPositionArrow: true,
   isSearchOpen: false,
 
   setActiveTab: (tab: SidebarTab) => {
@@ -70,6 +73,10 @@ export const useUIStore = create<UIState>()((set, get) => ({
 
   togglePdfDarkMode: () => {
     set((state) => ({ pdfDarkMode: !state.pdfDarkMode }))
+  },
+
+  togglePositionArrow: () => {
+    set((state) => ({ showPositionArrow: !state.showPositionArrow }))
   },
 
   resetPdfView: () => {

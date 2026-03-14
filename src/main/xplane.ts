@@ -14,6 +14,8 @@ const DATAREFS = [
 ]
 
 const UPDATE_FREQ = 5
+const FOCUSED_SEND_INTERVAL = 1000 / UPDATE_FREQ
+const UNFOCUSED_SEND_INTERVAL = FOCUSED_SEND_INTERVAL / 0.8
 
 class XPlaneService {
   private socket: Socket | null = null
@@ -25,6 +27,7 @@ class XPlaneService {
   private position: AircraftPosition = { lat: 0, lon: 0, heading: 0 }
   private connected = false
   private lastUpdateTime = 0
+  private lastSendTime = 0
   private connectionTimeout: NodeJS.Timeout | null = null
   private subscribed = false
 
@@ -151,8 +154,6 @@ class XPlaneService {
   }
 
   private handleMessage(msg: Buffer) {
-    if (!this.windowFocused) return
-
     const header = msg.toString('ascii', 0, 4)
     if (header !== 'RREF') return
 
@@ -168,7 +169,13 @@ class XPlaneService {
 
     this.lastUpdateTime = Date.now()
     this.setConnected(true)
-    this.sendPositionUpdate()
+
+    const now = Date.now()
+    const sendInterval = this.windowFocused ? FOCUSED_SEND_INTERVAL : UNFOCUSED_SEND_INTERVAL
+    if (now - this.lastSendTime >= sendInterval) {
+      this.lastSendTime = now
+      this.sendPositionUpdate()
+    }
   }
 
   private sendPositionUpdate() {

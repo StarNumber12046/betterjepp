@@ -3,6 +3,7 @@ export interface PinnedChart {
   filename: string
   proc_id: string
   type_name: string
+  category: string
 }
 
 export interface AppSettings {

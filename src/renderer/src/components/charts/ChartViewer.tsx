@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
 import { Loader2, MapPin } from 'lucide-react'
 import { useChartsStore } from '@/stores/chartsStore'
@@ -117,9 +117,11 @@ function PositionArrow({
 export function ChartViewer() {
   const currentChart = useChartsStore((s) => s.currentChart)
   const pdfZoom = useUIStore((s) => s.pdfZoom)
+  const setPdfZoom = useUIStore((s) => s.setPdfZoom)
   const pdfRotation = useUIStore((s) => s.pdfRotation)
   const pdfPage = useUIStore((s) => s.pdfPage)
   const pdfDarkMode = useUIStore((s) => s.pdfDarkMode)
+  const showPositionArrow = useUIStore((s) => s.showPositionArrow)
   const setPdfNumPages = useUIStore((s) => s.setPdfNumPages)
   const resetPdfView = useUIStore((s) => s.resetPdfView)
 
@@ -152,6 +154,23 @@ export function ChartViewer() {
     resizeObserver.observe(container)
     return () => resizeObserver.disconnect()
   }, [currentChart])
+
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      if (!e.ctrlKey) return
+      e.preventDefault()
+      const delta = e.deltaY > 0 ? -0.1 : 0.1
+      setPdfZoom(pdfZoom + delta)
+    },
+    [pdfZoom, setPdfZoom]
+  )
+
+  useEffect(() => {
+    const container = document.getElementById('chart-container')
+    if (!container) return
+    container.addEventListener('wheel', handleWheel, { passive: false })
+    return () => container.removeEventListener('wheel', handleWheel)
+  }, [handleWheel])
 
   useEffect(() => {
     if (!currentChart || !georefEnabled) {
@@ -188,6 +207,7 @@ export function ChartViewer() {
     })
 
     if (!currentChart || !chartGeoStatus?.georef?.georeferenced || !position || !georefEnabled) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPixelPosition(null)
       return
     }
@@ -258,7 +278,8 @@ export function ChartViewer() {
 
           <GeorefStatusBadge />
 
-          {chartGeoStatus?.georef?.georeferenced &&
+          {showPositionArrow &&
+            chartGeoStatus?.georef?.georeferenced &&
             pixelPosition &&
             position &&
             georefEnabled &&

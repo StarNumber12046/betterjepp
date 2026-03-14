@@ -95,22 +95,32 @@ export const useChartsStore = create<ChartsState>()(
   )
 )
 
-export function categorizeChart(chart: { chart_type?: string; type_name?: string }): ChartCategory {
+export function categorizeChart(chart: {
+  chart_type?: string
+  type_name?: string
+  category: string
+}): ChartCategory {
   const type = chart.chart_type?.toUpperCase() || ''
   const typeName = chart.type_name?.toUpperCase() || ''
-
+  const category = chart.category?.toUpperCase() || ''
   if (
     type === 'AD' ||
     type === 'AP' ||
     typeName.includes('TAXI') ||
-    typeName.includes('AIRPORT DIAGRAM')
+    typeName.includes('AIRPORT DIAGRAM') ||
+    category === 'AIRPORT'
   ) {
     return 'taxi'
   }
-  if (typeName.includes('SID') || typeName.includes('DP') || typeName.includes('DEPARTURE')) {
+  if (
+    typeName.includes('SID') ||
+    typeName.includes('DP') ||
+    typeName.includes('DEPARTURE') ||
+    category === 'DEPARTURE'
+  ) {
     return 'departure'
   }
-  if (typeName.includes('STAR') || typeName.includes('ARRIVAL')) {
+  if (typeName.includes('STAR') || typeName.includes('ARRIVAL') || category === 'ARRIVAL') {
     return 'arrival'
   }
   if (
@@ -119,7 +129,8 @@ export function categorizeChart(chart: { chart_type?: string; type_name?: string
     typeName.includes('VOR') ||
     typeName.includes('NDB') ||
     typeName.includes('APPROACH') ||
-    typeName.includes('APP')
+    typeName.includes('APP') ||
+    category === 'APPROACH'
   ) {
     return 'approach'
   }

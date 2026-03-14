@@ -11,7 +11,8 @@ import {
   Moon,
   Sun,
   X,
-  Pin
+  Pin,
+  Navigation
 } from 'lucide-react'
 import { useChartsStore } from '@renderer/stores/chartsStore'
 import { useGeorefStore } from '@renderer/stores/georefStore'
@@ -32,6 +33,8 @@ export function TopBar() {
   const setPdfPage = useUIStore((s) => s.setPdfPage)
   const pdfDarkMode = useUIStore((s) => s.pdfDarkMode)
   const togglePdfDarkMode = useUIStore((s) => s.togglePdfDarkMode)
+  const showPositionArrow = useUIStore((s) => s.showPositionArrow)
+  const togglePositionArrow = useUIStore((s) => s.togglePositionArrow)
   const setCurrentChart = useChartsStore((s) => s.setCurrentChart)
   const currentChart = useChartsStore((s) => s.currentChart)
   const pinChart = useChartsStore((s) => s.pinChart)
@@ -39,8 +42,8 @@ export function TopBar() {
   const isPinned =
     useChartsStore((s) => s.isPinned(currentChart?.icao ?? '', currentChart?.filename ?? '')) ??
     false
-  const xplaneConnected = useGeorefStore((s) => s.xplaneConnected)
-  const position = useGeorefStore((s) => s.position)
+  const chartGeoStatus = useGeorefStore((s) => s.chartGeoStatus)
+  const isGeoreferenced = chartGeoStatus?.georef?.georeferenced ?? false
 
   if (pdfNumPages === 0 || activeTab === 'settings') {
     return null
@@ -109,14 +112,19 @@ export function TopBar() {
           {pdfDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
         </Button>
 
-        <Separator className="h-5 w-px mx-0.5" />
-
-        <Badge
-          variant={xplaneConnected ? 'default' : 'outline'}
-          className="h-6 px-1.5 text-xs font-mono"
-        >
-          {position ? `${position.lat.toFixed(2)}, ${position.lon.toFixed(2)}` : '--.--, --.--'}
-        </Badge>
+        {isGeoreferenced && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={togglePositionArrow}
+            className={cn(
+              'h-7 w-7',
+              showPositionArrow && 'bg-accent border border-chart-list-selected'
+            )}
+          >
+            <Navigation className="w-3.5 h-3.5" />
+          </Button>
+        )}
 
         <Button
           variant="ghost"

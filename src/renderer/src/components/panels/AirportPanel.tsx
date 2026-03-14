@@ -32,9 +32,9 @@ type AirportView = 'charts' | 'info'
 const categories: { id: ChartCategory; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'taxi', label: 'Taxi' },
-  { id: 'departure', label: 'Dep' },
-  { id: 'arrival', label: 'Arr' },
-  { id: 'approach', label: 'Appr' },
+  { id: 'departure', label: 'SID' },
+  { id: 'arrival', label: 'STAR' },
+  { id: 'approach', label: 'App' },
   { id: 'other', label: 'Other' }
 ]
 
@@ -65,7 +65,8 @@ function ChartListItem({
         icao: chart.icao,
         filename: chart.filename,
         proc_id: chart.proc_id,
-        type_name: chart.type_name
+        type_name: chart.type_name,
+        category: chart.category
       })
     }
   }
