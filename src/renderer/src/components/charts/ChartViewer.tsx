@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
-import { Loader2, MapPin } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useChartsStore } from '@/stores/chartsStore'
 import { useUIStore } from '@/stores/uiStore'
 import { useGeorefStore } from '@/stores/georefStore'
@@ -46,28 +46,6 @@ function EmptyState() {
           </p>
         )}
       </div>
-    </div>
-  )
-}
-
-function GeorefStatusBadge() {
-  const chartGeoStatus = useGeorefStore((s) => s.chartGeoStatus)
-
-  if (!chartGeoStatus) return null
-
-  return (
-    <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/80 backdrop-blur-sm border border-border text-xs">
-      {chartGeoStatus.georef?.georeferenced ? (
-        <>
-          <MapPin className="w-3 h-3 text-green-500" />
-          <span className="text-green-500">Georeferenced</span>
-        </>
-      ) : (
-        <>
-          <div className="w-2 h-2 rounded-full bg-muted-foreground" />
-          <span className="text-muted-foreground">Not georeferenced</span>
-        </>
-      )}
     </div>
   )
 }
@@ -275,8 +253,6 @@ export function ChartViewer() {
               />
             </div>
           </Document>
-
-          <GeorefStatusBadge />
 
           {showPositionArrow &&
             chartGeoStatus?.georef?.georeferenced &&

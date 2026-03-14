@@ -19,7 +19,8 @@ export function PinnedChartsBar() {
         pinnedCharts.map((chart) => {
           const category = categorizeChart({
             chart_type: '',
-            type_name: chart.type_name
+            type_name: chart.type_name,
+            category: chart.category
           })
           const borderColor = CHART_CATEGORY_COLORS[category]
           const isActive =
