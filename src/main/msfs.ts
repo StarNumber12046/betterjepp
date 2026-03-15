@@ -30,7 +30,7 @@ class MsfsService {
   private lastSendTime = 0
   private connecting = false
   private retryCount = 0
-  private maxRetries = 10
+  private maxRetries = 20
 
   setMainWindow(window: BrowserWindow) {
     this.mainWindow = window
@@ -44,9 +44,9 @@ class MsfsService {
     if (this.connecting || this.simconnect) return
     this.connecting = true
 
-    open('BetterJepp MSFS Client', Protocol.FSX_SP2, {
-      remote: { host: 'localhost', port: 5111 }
-    })
+    console.log('[MSFS] Attempting SimConnect connection (pipe)...')
+
+    open('BetterJepp MSFS Client', Protocol.KittyHawk)
       .then(({ handle }) => {
         this.simconnect = handle
         this.connecting = false
@@ -57,7 +57,8 @@ class MsfsService {
       })
       .catch((error) => {
         this.connecting = false
-        console.error('[MSFS] Connection failed:', error)
+        const errorMsg = error?.message || String(error)
+        console.error('[MSFS] Connection failed:', errorMsg)
         this.setConnected(false)
         this.retry()
       })
@@ -71,7 +72,7 @@ class MsfsService {
     this.retryCount++
     const delay = Math.min(this.retryCount * 2000, 30000)
     console.log(
-      `[MSFS] Retrying connection in ${delay / 1000}s (attempt ${this.retryCount}/${this.maxRetries})`
+      `[MSFS] Retrying in ${delay / 1000}s (attempt ${this.retryCount}/${this.maxRetries})`
     )
     setTimeout(() => this.connect(), delay)
   }
