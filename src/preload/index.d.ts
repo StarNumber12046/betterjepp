@@ -44,8 +44,11 @@ interface Api {
   setGeorefEnabled: (enabled: boolean) => Promise<boolean>
   setXplanePorts: (sendPort: number, listenPort: number) => Promise<boolean>
   getXplaneConnected: () => Promise<boolean>
+  getMsfsConnected: () => Promise<boolean>
   onXplanePosition: (callback: (position: AircraftPosition) => void) => void
   onXplaneConnected: (callback: (connected: boolean) => void) => void
+  onMsfsPosition: (callback: (position: AircraftPosition) => void) => void
+  onMsfsConnected: (callback: (connected: boolean) => void) => void
   onWindowFocused: (callback: (focused: boolean) => void) => void
 }
 

@@ -5,6 +5,7 @@ import { autoUpdater } from 'electron-updater'
 import icon from '../../resources/icon.png?asset'
 import { registerAllIpcHandlers } from './ipc'
 import { xplaneService } from './xplane'
+import { msfsService } from './msfs'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -28,14 +29,18 @@ function createWindow(): void {
     mainWindow?.show()
     xplaneService.setMainWindow(mainWindow!)
     xplaneService.start(49000, 49001).catch(console.error)
+    msfsService.setMainWindow(mainWindow!)
+    msfsService.start().catch(console.error)
   })
 
   mainWindow.on('focus', () => {
     xplaneService.setWindowFocused(true)
+    msfsService.setWindowFocused(true)
   })
 
   mainWindow.on('blur', () => {
     xplaneService.setWindowFocused(false)
+    msfsService.setWindowFocused(false)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

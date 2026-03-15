@@ -67,6 +67,8 @@ const api = {
 
   getXplaneConnected: (): Promise<boolean> => ipcRenderer.invoke('get-xplane-connected'),
 
+  getMsfsConnected: (): Promise<boolean> => ipcRenderer.invoke('get-msfs-connected'),
+
   onXplanePosition: (
     callback: (position: { lat: number; lon: number; heading: number }) => void
   ) => {
@@ -75,6 +77,14 @@ const api = {
 
   onXplaneConnected: (callback: (connected: boolean) => void) => {
     ipcRenderer.on('xplane-connected', (_event, connected) => callback(connected))
+  },
+
+  onMsfsPosition: (callback: (position: { lat: number; lon: number; heading: number }) => void) => {
+    ipcRenderer.on('msfs-position', (_event, position) => callback(position))
+  },
+
+  onMsfsConnected: (callback: (connected: boolean) => void) => {
+    ipcRenderer.on('msfs-connected', (_event, connected) => callback(connected))
   },
 
   onWindowFocused: (callback: (focused: boolean) => void) => {

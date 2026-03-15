@@ -38,6 +38,7 @@
     "ky": "^1.14.3",
     "lucide-react": "^0.577.0",
     "ms": "^2.1.3",
+    "node-simconnect": "^4.0.0",
     "react-pdf": "^10.4.1",
     "react-router-dom": "^7.13.1",
     "tailwind-merge": "^3.5.0",

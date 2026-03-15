@@ -3,6 +3,7 @@ import { join } from 'path'
 import { writeFile, mkdir, readFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import { xplaneService } from '../xplane'
+import { msfsService } from '../msfs'
 
 let settingsPath: string
 
@@ -147,6 +148,7 @@ export function registerWindowControlHandlers() {
 export function registerXplaneHandlers() {
   ipcMain.handle('set-georef-enabled', async (_, enabled: boolean) => {
     xplaneService.setGeorefEnabled(enabled)
+    msfsService.setGeorefEnabled(enabled)
     return true
   })
 
@@ -157,6 +159,10 @@ export function registerXplaneHandlers() {
 
   ipcMain.handle('get-xplane-connected', () => {
     return xplaneService.isConnected()
+  })
+
+  ipcMain.handle('get-msfs-connected', () => {
+    return msfsService.isConnected()
   })
 }
 
