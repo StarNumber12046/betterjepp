@@ -3,6 +3,7 @@ import { Star, ChevronDown, MoreHorizontal } from 'lucide-react'
 import { useChartsStore, categorizeChart } from '@/stores/chartsStore'
 import { CHART_CATEGORY_COLORS } from '@/types'
 import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 export function PinnedChartsBar() {
   const [collapsed, setCollapsed] = useState(false)
@@ -24,12 +25,18 @@ export function PinnedChartsBar() {
 
   if (collapsed) {
     return (
-      <div
-        onClick={() => setCollapsed(false)}
-        className="h-4 border-t border-border bg-card flex items-center justify-center cursor-pointer hover:bg-muted transition-colors"
-      >
-        <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-      </div>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => setCollapsed(false)}
+            aria-label="Expand pinned charts"
+            className="h-4 w-full border-t border-border bg-card flex items-center justify-center hover:bg-muted transition-colors"
+          >
+            <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top">Expand pinned charts</TooltipContent>
+      </Tooltip>
     )
   }
 
@@ -97,12 +104,18 @@ export function PinnedChartsBar() {
       </div>
 
       <div className="w-10 h-full flex items-center justify-center border-l border-border bg-card shadow-[-4px_0_6px_rgba(0,0,0,0.15)]">
-        <button
-          onClick={() => setCollapsed(true)}
-          className="w-full h-full flex items-center justify-center hover:bg-muted transition-colors"
-        >
-          <ChevronDown className="w-4 h-4" />
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => setCollapsed(true)}
+              aria-label="Collapse pinned charts"
+              className="w-full h-full flex items-center justify-center hover:bg-muted transition-colors"
+            >
+              <ChevronDown className="w-4 h-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="left">Collapse pinned charts</TooltipContent>
+        </Tooltip>
       </div>
     </div>
   )
