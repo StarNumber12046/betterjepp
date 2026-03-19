@@ -227,49 +227,51 @@ export function ChartViewer() {
 
   return (
     <div id="chart-container" className="h-full flex flex-col bg-muted/30">
-      <div className="flex-1 overflow-auto flex items-start justify-center p-6">
-        <div className="relative">
-          <Document
-            file={pdfUrl}
-            onLoadSuccess={({ numPages }) => setPdfNumPages(numPages)}
-            loading={
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-              </div>
-            }
-            error={
-              <div className="flex items-center justify-center py-20 text-destructive">
-                <p>Failed to load chart</p>
-              </div>
-            }
-          >
-            <div ref={pageWrapperRef} style={pdfDarkMode ? { filter: 'invert(1)' } : undefined}>
-              <Page
-                pageNumber={pdfPage}
-                scale={pdfZoom}
-                rotate={pdfRotation}
-                width={containerWidth}
-                className="shadow-lg"
-              />
-            </div>
-          </Document>
-
-          {showPositionArrow &&
-            chartGeoStatus?.georef?.georeferenced &&
-            pixelPosition &&
-            position &&
-            georefEnabled &&
-            chartGeoStatus.width > 0 &&
-            chartGeoStatus.height > 0 && (
-              <>
-                <PositionArrow
-                  percentX={pixelPosition.x / chartGeoStatus.width}
-                  percentY={pixelPosition.y / chartGeoStatus.height}
-                  heading={position.heading ?? 0}
-                  rotation={pdfRotation}
+      <div className="flex-1 overflow-auto p-6">
+        <div className="min-w-fit flex justify-center">
+          <div className="relative">
+            <Document
+              file={pdfUrl}
+              onLoadSuccess={({ numPages }) => setPdfNumPages(numPages)}
+              loading={
+                <div className="flex items-center justify-center py-20">
+                  <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+              }
+              error={
+                <div className="flex items-center justify-center py-20 text-destructive">
+                  <p>Failed to load chart</p>
+                </div>
+              }
+            >
+              <div ref={pageWrapperRef} style={pdfDarkMode ? { filter: 'invert(1)' } : undefined}>
+                <Page
+                  pageNumber={pdfPage}
+                  scale={pdfZoom}
+                  rotate={pdfRotation}
+                  width={containerWidth}
+                  className="shadow-lg"
                 />
-              </>
-            )}
+              </div>
+            </Document>
+
+            {showPositionArrow &&
+              chartGeoStatus?.georef?.georeferenced &&
+              pixelPosition &&
+              position &&
+              georefEnabled &&
+              chartGeoStatus.width > 0 &&
+              chartGeoStatus.height > 0 && (
+                <>
+                  <PositionArrow
+                    percentX={pixelPosition.x / chartGeoStatus.width}
+                    percentY={pixelPosition.y / chartGeoStatus.height}
+                    heading={position.heading ?? 0}
+                    rotation={pdfRotation}
+                  />
+                </>
+              )}
+          </div>
         </div>
       </div>
     </div>
